@@ -43,6 +43,13 @@ const SpringText = LoadableComponent(()=>import('../../routes/Other/SpringText/i
 //关于
 const About = LoadableComponent(()=>import('../../routes/About/index'))
 
+
+//方法 
+
+const MethodGet = LoadableComponent(()=>import("../../routes/Method/GetDemo/index"))
+const MethodPost = LoadableComponent(()=>import("../../routes/Method/PostDemo/index"))
+
+
 @withRouter
 class ContentMain extends React.Component {
   render () {
@@ -50,6 +57,9 @@ class ContentMain extends React.Component {
       <div style={{padding: 16, position: 'relative'}}>
         <Switch>
           <PrivateRoute exact path='/home' component={Home}/>
+          
+          <PrivateRoute exact path='/home/method/get' component={MethodGet}/>
+          <PrivateRoute exact path='/home/method/post' component={MethodPost}/>
 
           <PrivateRoute exact path='/home/general/button' component={ButtonDemo}/>
           <PrivateRoute exact path='/home/general/icon' component={IconDemo}/>

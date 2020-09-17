@@ -8,6 +8,15 @@ const menus = [
     key: '/home'
   },
   {
+    title: 'UI方法',
+    icon: 'laptop',
+    key: '/home/method',
+    subs: [
+      {key: '/home/method/get', title: '已有方法', icon: '',},
+      {key: '/home/method/post', title: '添加方法', icon: '',},
+    ]
+  },
+  {
     title: '基本组件',
     icon: 'laptop',
     key: '/home/general',
