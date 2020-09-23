@@ -2,20 +2,16 @@ import React from "react";
 import axios from "axios";
 import {
   Card,
-  Alert,
   Divider,
   Select,
   Steps,
   Input,
   Button,
   Form,
-  Icon,
   BackTop,
 } from "antd";
 import { inject, observer } from "mobx-react";
 import ".././css/formDeni2.css";
-import { digitUppercase } from "../../../utils/utils";
-import TypingCard from "../../../components/TypingCard";
 
 const { Step } = Steps;
 const { Option } = Select;
@@ -43,8 +39,7 @@ class StepOne extends React.Component {
       projectData: [],
     };
   }
-
-  componentWillMount = () => {
+  componentDidMount = () => {
     let url = "http://127.0.0.1:5000/api/projectOpt";
     axios
       .get(url)
@@ -58,7 +53,6 @@ class StepOne extends React.Component {
       });
   };
 
-
   nextStep = () => {
     this.props.form.validateFields((err, values) => {
       console.log(err);
@@ -69,6 +63,9 @@ class StepOne extends React.Component {
       }
     });
   };
+  handleProjectChange = (value) => {
+    console.log(value);
+  };
 
   render() {
     const { getFieldDecorator } = this.props.form;
@@ -76,21 +73,25 @@ class StepOne extends React.Component {
       <div>
         <Form className="stepForm" hideRequiredMark>
           <Form.Item {...formItemLayout} label="Project">
-            {/* <Input.Group compact> */}
-            <Select style={{ width: "100%" }} onChange={console.log('err')}>
-            </Select>
-            {getFieldDecorator("Project", {
+            {getFieldDecorator("projectId", {
               initialValue: "",
               rules: [{ required: true, message: "选择项目" }],
-            })}
-            {/* </Input.Group> */}
+            })(
+              <Select style={{ width: "100%" }} placeholder="选择项目">
+                {this.state.projectData.map((item) => (
+                  <Option key={item.id} value={item.id}>
+                    {item.project_name}
+                  </Option>
+                ))}
+              </Select>
+            )}
           </Form.Item>
 
-          <Form.Item {...formItemLayout} label="methName">
+          <Form.Item {...formItemLayout} label="methodName">
             {getFieldDecorator("methName", {
               initialValue: "",
               rules: [{ required: true, message: "请输如方法名姓名" }],
-            })(<Input placeholder="请输入收款人姓名" />)}
+            })(<Input placeholder="请输如方法名姓名" />)}
           </Form.Item>
 
           <Form.Item {...formItemLayout} label="methodDesc">
@@ -211,6 +212,7 @@ class MethodPost extends React.Component {
     );
   }
 }
+
 const styles = {
   steps: {
     maxWidth: 750,

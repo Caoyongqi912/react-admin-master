@@ -27,6 +27,7 @@ const tailFormItemLayout = {
 class Step1 extends React.Component{
   nextStep = () =>{
     this.props.form.validateFields((err,values)=>{
+      console.log(values)
       if (!err){
         this.props.stepFormStore.setInfo(values)
         this.props.stepFormStore.setCurrent(1)
