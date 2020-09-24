@@ -99,7 +99,7 @@ class SpringText extends React.Component{
       }
 
       this.checkMove = function() {
-        this.moved = (!Math.abs(Math.round(this.target_x - this.x)) == 0 || !Math.abs(Math.round(this.target_y - this.y)) == 0 || !Math.abs(Math.round(this.velx)) == 0 || !Math.abs(Math.round(this.vely)) == 0);
+        this.moved = (!Math.abs(Math.round(this.target_x - this.x)) === 0 || !Math.abs(Math.round(this.target_y - this.y)) === 0 || !Math.abs(Math.round(this.velx)) === 0 || !Math.abs(Math.round(this.vely)) === 0);
       }
 
       this.simpleMove = function() {
@@ -192,7 +192,7 @@ class SpringText extends React.Component{
       ctx.font = FONT_SIZE + "px Arial";
       ctx.fillText(MESSAGE, canvas.width/2, canvas.height/2);
       var textWidth = ctx.measureText(MESSAGE).width;
-      if (textWidth == 0) {
+      if (textWidth === 0) {
         return;
       }
       var minX = canvas.width/2 - textWidth/2;
@@ -201,7 +201,7 @@ class SpringText extends React.Component{
       ctx.clearRect(0,0,canvas.width,canvas.height);
       var isBlank = true;
       for (var i=0; i<data.length; i++) {
-        if (data[i] != 0) {
+        if (data[i] !== 0) {
           isBlank = false;
           break;
         }
@@ -216,7 +216,7 @@ class SpringText extends React.Component{
         var w = Math.floor(textWidth);
         POINTS = [];
         while (count < AMOUNT) {
-          while (curr == 0) {
+          while (curr === 0) {
             num = Math.floor(Math.random() * data.length);
             curr = data[num];
           }

@@ -2,6 +2,7 @@ import React from "react";
 import axios from "axios";
 import {
   Card,
+  Table,
   Divider,
   Select,
   Steps,
@@ -9,6 +10,7 @@ import {
   Button,
   Form,
   BackTop,
+  Popconfirm,
 } from "antd";
 import { inject, observer } from "mobx-react";
 import ".././css/formDeni2.css";
@@ -113,26 +115,154 @@ class StepOne extends React.Component {
   }
 }
 
+const selectOpt = (
+  <Select placeholder="选择方法" style={{ width: "100%" }}>
+    <option value="get">get</option>
+    <option value="click">click</option>
+    <option value="send_keys">send_keys</option>
+    <option value="get_text">get_text</option>
+    <option value="get_title">get_title</option>
+    <option value="get_url">get_url</option>
+    <option value="clear">clear</option>
+    <option value="action_click">action_click</option>
+    <option value="action_send_keys">action_send_keys</option>
+    <option value="go_back">go_back</option>
+    <option value="switch_window">switch_window</option>
+    <option value="screenshot">screenshot</option>
+    <option value="js">js</option>
+    <option value="sleep">sleep</option>
+  </Select>
+);
+
 @inject("stepFormStore")
 @Form.create()
 @observer
 class StepTwo extends React.Component {
-  state = {
-    loading: false,
+  constructor(props) {
+    super(props);
+    
+    
+    this.state = {
+      loading: false,
+      steps: [
+        {
+          key: 1,
+          name: <Input placeholder="步骤名称" />,
+          desc: <Input placeholder="步骤详情" />,
+          is_method:result,
+          do: selectOpt,
+          locator: <Input placeholder="步骤元素" />,
+          value: <Input placeholder="请求数据" />,
+          type: <Input placeholder="元素类型" />,
+          data: <Input placeholder="验证数据" />,
+          variable: <Input placeholder="变量名称" />,
+          validate: <Input placeholder="认证" />,
+        },
+      ],
+      count: 2,
+    };
+    
+  }
+  
+  componentDidMount = () => {
+    let url = "http://127.0.0.1:5000/api/methodOpt";
+    axios
+      .get(url)
+      .then((response) => {
+        let result = response.data.data;
+
+        // this.setState({ methodArr: result });
+        // console.log(this.state.methodArr)
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
   };
-  handleSubmit = () => {
-    this.props.form.validateFields((err, values) => {
-      if (!err) {
-        this.setState({
-          loading: true,
-        });
-        setTimeout(() => {
-          this.setState({
-            loading: false,
-          });
-          this.props.stepFormStore.setCurrent(2);
-        }, 2000);
-      }
+  Titles = [
+    {
+      title: "name",
+      dataIndex: "name",
+    },
+    {
+      title: "desc",
+      dataIndex: "desc",
+    },
+    {
+      title: "is_method",
+      dataIndex: "is_method",
+      width: "5%",
+    },
+    {
+      title: "do",
+      dataIndex: "do",
+      width: "9%",
+    },
+    {
+      title: "type",
+      dataIndex: "type",
+    },
+    {
+      title: "locator",
+      dataIndex: "locator",
+    },
+    {
+      title: "value",
+      dataIndex: "value",
+    },
+    {
+      title: "data",
+      dataIndex: "data",
+    },
+    {
+      title: "variable",
+      dataIndex: "variable",
+    },
+
+    {
+      title: "validate",
+      dataIndex: "validate",
+    },
+    {
+      title: "operation",
+      dataIndex: "operation",
+      render: (text, record) => {
+        return this.state.steps.length > 0 ? (
+          <Popconfirm
+            title="Sure to delete?"
+            onConfirm={() => this.onDelete(record.key)}
+          >
+            <a>Delete</a>
+          </Popconfirm>
+        ) : null;
+      },
+    },
+  ];
+
+  onDelete = (key) => {
+    const arr = this.state.steps.slice();
+    this.setState({
+      steps: arr.filter((item) => item.key !== key),
+    });
+  };
+
+  handleAdd = () => {
+    const { steps, count } = this.state;
+    const newData = {
+      key: count,
+      name: <Input placeholder="步骤名称" />,
+      desc: <Input placeholder="步骤详情" />,
+      is_method: <Input placeholder="使用方法" />,
+      do: selectOpt,
+      locator: <Input placeholder="步骤元素" />,
+      value: <Input placeholder="请求数据" />,
+      type: <Input placeholder="元素类型" />,
+      data: <Input placeholder="验证数据" />,
+      variable: <Input placeholder="变量名称" />,
+      validate: <Input placeholder="认证" />,
+    };
+    this.setState({
+      steps: [...steps, newData],
+      count: count + 1,
     });
   };
 
@@ -140,44 +270,31 @@ class StepTwo extends React.Component {
     const { getFieldDecorator } = this.props.form;
     return (
       <div>
-        <Form className="stepForm" hideRequiredMark>
-          <Form.Item {...formItemLayout} label="Project">
-            <Input.Group compact>
-              <Select
-                defaultValue="alipay"
-                style={{ width: "calc(100% - 100px)" }}
-              >
-                <Option value="alipay">1</Option>
-                <Option value="bank">11</Option>
-              </Select>
-              {getFieldDecorator("Project", {
-                initialValue: "",
-                rules: [{ required: true, message: "选择项目" }],
-              })}
-            </Input.Group>
-          </Form.Item>
+        <hr />
+        <p>
+          <Button onClick={this.handleAdd}>添加行</Button>
+        </p>
 
-          <Form.Item {...formItemLayout} label="methName">
-            {getFieldDecorator("methName", {
-              initialValue: "",
-              rules: [{ required: true, message: "请输如方法名姓名" }],
-            })(<Input placeholder="请输入收款人姓名" />)}
-          </Form.Item>
+        <Table
+          style={styles}
+          bordered
+          dataSource={this.state.steps}
+          columns={this.Titles}
+        />
 
-          <Form.Item {...formItemLayout} label="methodDesc">
-            {getFieldDecorator("methodDesc", {
-              initialValue: "",
-            })(<Input placeholder="请输入详情" />)}
-          </Form.Item>
-
-          <Form.Item {...tailFormItemLayout}>
-            <Button type="primary" onClick={this.nextStep}>
-              下一步
-            </Button>
-          </Form.Item>
-        </Form>
-        <Divider />
-        <BackTop visibilityHeight={200} style={{ right: 50 }} />
+        <Button
+          type="primary"
+          onClick={this.handleSubmit}
+          loading={this.state.loading}
+        >
+          提交
+        </Button>
+        <Button
+          onClick={() => this.props.stepFormStore.setCurrent(0)}
+          style={{ marginLeft: 8 }}
+        >
+          上一步
+        </Button>
       </div>
     );
   }
@@ -191,17 +308,14 @@ class MethodPost extends React.Component {
       case 1:
         return <StepTwo />;
       default:
-        return <StepOne />;
+        return <StepTwo />;
     }
   };
   render() {
     return (
       <div>
         <Card title="分步表单" bordered={false} style={{ minHeight: 600 }}>
-          <Steps
-            style={styles.steps}
-            current={this.props.stepFormStore.current}
-          >
+          <Steps style={styles} current={this.props.stepFormStore.current}>
             <Step title="填写基本信息" />
             <Step title="填写详细步骤" />
             <Step title="完成" />
@@ -214,13 +328,7 @@ class MethodPost extends React.Component {
 }
 
 const styles = {
-  steps: {
-    maxWidth: 750,
-    margin: "16px auto",
-  },
-  desc: {
-    padding: "0 56px",
-  },
+  width: "100%",
 };
 
 export default MethodPost;
