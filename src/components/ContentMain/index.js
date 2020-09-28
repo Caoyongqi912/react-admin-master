@@ -61,6 +61,7 @@ class ContentMain extends React.Component {
           <PrivateRoute exact path='/home/method/get' component={MethodGet}/>
           <PrivateRoute exact path='/home/method/post' component={MethodPost}/>
 
+
           <PrivateRoute exact path='/home/general/button' component={ButtonDemo}/>
           <PrivateRoute exact path='/home/general/icon' component={IconDemo}/>
 

@@ -6,11 +6,11 @@ import {
   Divider,
   Select,
   Steps,
-  Input,
   Button,
   Form,
   BackTop,
   Popconfirm,
+  Input,
 } from "antd";
 import { inject, observer } from "mobx-react";
 import ".././css/formDeni2.css";
@@ -116,21 +116,21 @@ class StepOne extends React.Component {
 }
 
 const selectOpt = (
-  <Select placeholder="选择方法" style={{ width: "100%" }}>
-    <option value="get">get</option>
-    <option value="click">click</option>
-    <option value="send_keys">send_keys</option>
-    <option value="get_text">get_text</option>
-    <option value="get_title">get_title</option>
-    <option value="get_url">get_url</option>
-    <option value="clear">clear</option>
-    <option value="action_click">action_click</option>
-    <option value="action_send_keys">action_send_keys</option>
-    <option value="go_back">go_back</option>
-    <option value="switch_window">switch_window</option>
-    <option value="screenshot">screenshot</option>
-    <option value="js">js</option>
-    <option value="sleep">sleep</option>
+  <Select placeholder="choice do" bordered>
+    <Option value="get">get</Option>
+    <Option value="click">click</Option>
+    <Option value="send_keys">send_keys</Option>
+    <Option value="get_text">get_text</Option>
+    <Option value="get_title">get_title</Option>
+    <Option value="get_url">get_url</Option>
+    <Option value="clear">clear</Option>
+    <Option value="action_click">action_click</Option>
+    <Option value="action_send_keys">action_send_keys</Option>
+    <Option value="go_back">go_back</Option>
+    <Option value="switch_window">switch_window</Option>
+    <Option value="screenshot">screenshot</Option>
+    <Option value="js">js</Option>
+    <Option value="sleep">sleep</Option>
   </Select>
 );
 
@@ -140,103 +140,182 @@ const selectOpt = (
 class StepTwo extends React.Component {
   constructor(props) {
     super(props);
-    
-    
+    const { getFieldDecorator } = this.props.form;
+
+    this.Titles = [
+      {
+        title: "name",
+        dataIndex: "name",
+        render: (text, record, index) => (
+          <Form.Item key={index}>
+            {getFieldDecorator(`method[${index}].name`, {
+              initialValue: "",
+              rules: [{ required: true, message: "name cannot be empty" }],
+            })(<Input placeholder="plase send name" />)}
+          </Form.Item>
+        ),
+      },
+      {
+        title: "desc",
+        dataIndex: "desc",
+        render: (text, record,index) => (
+          <Form.Item key={index}>
+            {getFieldDecorator(`method[${index}].desc`, {
+              initialValue: "",
+              rules: [{ required: false }],
+            })(<Input placeholder="send desc" />)}
+          </Form.Item>
+        ),
+      },
+      {
+        title: "method",
+        dataIndex: "method",
+        width: "8%",
+        render: (text, record,index) => (
+          <Form.Item key={index}>
+            {getFieldDecorator(`method[${index}].method`, {
+              initialValue: "",
+              rules: [{ required: false }],
+            })(
+              <Select placeholder="Please select" allowClear bordered>
+                {this.state.methods.map((item) => (
+                  <Option key={item.id} value={item.id}>
+                    {item.name}
+                  </Option>
+                ))}
+              </Select>
+            )}
+          </Form.Item>
+        ),
+      },
+      {
+        title: "do",
+        dataIndex: "do",
+        width: "10%",
+
+        render: (itext, record,index) => (
+          <Form.Item {...formItemLayout} key={index}>
+            {getFieldDecorator(`method[${index}].do`, {
+              initialValue: "",
+              rules: [{ required: true, message: "choice method" }],
+            })(selectOpt)}
+          </Form.Item>
+        ),
+      },
+      {
+        title: "type",
+        dataIndex: "type",
+        render: (text, record,index) => (
+          <Form.Item {...formItemLayout} key={index}>
+            {getFieldDecorator(`method[${index}].type`, {
+              initialValue: "",
+              rules: [{ required: true, message: "type cannot be empty" }],
+            })(<Input placeholder="send type" />)}
+          </Form.Item>
+        ),
+      },
+      {
+        title: "locator",
+        dataIndex: "locator",
+        render: (text, record,index) => (
+          <Form.Item {...formItemLayout} key={index}>
+            {getFieldDecorator(`method[${index}].locator`, {
+              initialValue: "",
+              rules: [{ required: true, message: "locator cannot be empty" }],
+            })(<Input placeholder="send locator" />)}
+          </Form.Item>
+        ),
+      },
+      {
+        title: "value",
+        dataIndex: "value",
+        render: (text, record,index) => (
+          <Form.Item {...formItemLayout} key={index}>
+            {getFieldDecorator(`method[${index}].value`, {
+              initialValue: "",
+              rules: [{ required: false }],
+            })(<Input placeholder="send value" />)}
+          </Form.Item>
+        ),
+      },
+      {
+        title: "data",
+        dataIndex: "data",
+        render: (text, record,index) => (
+          <Form.Item {...formItemLayout} key={index}>
+            {getFieldDecorator(`method[${index}].data`, {
+              initialValue: "",
+              rules: [{ required: false }],
+            })(<Input placeholder="send data" />)}
+          </Form.Item>
+        ),
+      },
+      {
+        title: "variable",
+        dataIndex: "variable",
+        render: (text, record,index) => (
+          <Form.Item {...formItemLayout} key={index}>
+            {getFieldDecorator(`method[${index}].variable`, {
+              initialValue: "",
+              rules: [{ required: false }],
+            })(<Input placeholder="send variable" />)}
+          </Form.Item>
+        ),
+      },
+      {
+        title: "validate",
+        dataIndex: "validate",
+        render: (text, record,index) => (
+          <Form.Item {...formItemLayout} key={index}>
+            {getFieldDecorator(`method[${index}].validate`, {
+              initialValue: "",
+              rules: [{ required: false }],
+            })(<Input placeholder="send validate" />)}
+          </Form.Item>
+        ),
+      },
+      {
+        title: "operation",
+        dataIndex: "operation",
+        render: (text, record) => {
+          return this.state.steps.length > 0 ? (
+            <Popconfirm
+              title="Sure to delete?"
+              onConfirm={() => this.onDelete(record.key)}
+            >
+              <a>Delete</a>
+            </Popconfirm>
+          ) : null;
+        },
+      },
+    ];
     this.state = {
       loading: false,
+      methods: [],
       steps: [
         {
           key: 1,
-          name: <Input placeholder="步骤名称" />,
-          desc: <Input placeholder="步骤详情" />,
-          is_method:result,
-          do: selectOpt,
-          locator: <Input placeholder="步骤元素" />,
-          value: <Input placeholder="请求数据" />,
-          type: <Input placeholder="元素类型" />,
-          data: <Input placeholder="验证数据" />,
-          variable: <Input placeholder="变量名称" />,
-          validate: <Input placeholder="认证" />,
+          name: "",
+          desc: "",
+          method: "",
+          do: "",
+          locator: "",
+          value: "",
+          type: "",
+          data: "",
+          variable: "",
+          validate: "",
         },
       ],
       count: 2,
     };
-    
   }
-  
-  componentDidMount = () => {
-    let url = "http://127.0.0.1:5000/api/methodOpt";
-    axios
-      .get(url)
-      .then((response) => {
-        let result = response.data.data;
 
-        // this.setState({ methodArr: result });
-        // console.log(this.state.methodArr)
-      })
-      .catch(function (error) {
-        console.log(error);
-      });
+  componentWillMount = async () => {
+    let res = await axios.get("http://127.0.0.1:5000/api/methodOpt");
+    let data = res.data.data;
+    this.setState({ methods: data });
   };
-  Titles = [
-    {
-      title: "name",
-      dataIndex: "name",
-    },
-    {
-      title: "desc",
-      dataIndex: "desc",
-    },
-    {
-      title: "is_method",
-      dataIndex: "is_method",
-      width: "5%",
-    },
-    {
-      title: "do",
-      dataIndex: "do",
-      width: "9%",
-    },
-    {
-      title: "type",
-      dataIndex: "type",
-    },
-    {
-      title: "locator",
-      dataIndex: "locator",
-    },
-    {
-      title: "value",
-      dataIndex: "value",
-    },
-    {
-      title: "data",
-      dataIndex: "data",
-    },
-    {
-      title: "variable",
-      dataIndex: "variable",
-    },
-
-    {
-      title: "validate",
-      dataIndex: "validate",
-    },
-    {
-      title: "operation",
-      dataIndex: "operation",
-      render: (text, record) => {
-        return this.state.steps.length > 0 ? (
-          <Popconfirm
-            title="Sure to delete?"
-            onConfirm={() => this.onDelete(record.key)}
-          >
-            <a>Delete</a>
-          </Popconfirm>
-        ) : null;
-      },
-    },
-  ];
 
   onDelete = (key) => {
     const arr = this.state.steps.slice();
@@ -249,16 +328,16 @@ class StepTwo extends React.Component {
     const { steps, count } = this.state;
     const newData = {
       key: count,
-      name: <Input placeholder="步骤名称" />,
-      desc: <Input placeholder="步骤详情" />,
-      is_method: <Input placeholder="使用方法" />,
-      do: selectOpt,
-      locator: <Input placeholder="步骤元素" />,
-      value: <Input placeholder="请求数据" />,
-      type: <Input placeholder="元素类型" />,
-      data: <Input placeholder="验证数据" />,
-      variable: <Input placeholder="变量名称" />,
-      validate: <Input placeholder="认证" />,
+      name: "",
+      desc: "",
+      method: "",
+      do: "",
+      locator: "",
+      value: "",
+      type: "",
+      data: "",
+      variable: "",
+      validate: "",
     };
     this.setState({
       steps: [...steps, newData],
@@ -266,22 +345,44 @@ class StepTwo extends React.Component {
     });
   };
 
+  handleSubmit = () => {
+    this.props.form.validateFields((err, values) => {
+      console.log(values);
+      if (!err) {
+        this.setState({
+          loading: true,
+        });
+        setTimeout(() => {
+          this.setState({
+            loading: false,
+          });
+          this.props.stepFormStore.setCurrent(1);
+        }, 2000);
+      }
+    });
+  };
+
   render() {
-    const { getFieldDecorator } = this.props.form;
+    const {
+      form: { getFieldDecorator },
+      steps,
+    } = this.props;
     return (
       <div>
         <hr />
         <p>
           <Button onClick={this.handleAdd}>添加行</Button>
         </p>
-
-        <Table
-          style={styles}
-          bordered
-          dataSource={this.state.steps}
-          columns={this.Titles}
-        />
-
+        <Form>
+          <Form.Item>
+            <Table
+              style={styles}
+              bordered
+              dataSource={this.state.steps}
+              columns={this.Titles}
+            />
+          </Form.Item>
+        </Form>
         <Button
           type="primary"
           onClick={this.handleSubmit}
@@ -302,11 +403,21 @@ class StepTwo extends React.Component {
 
 @inject("stepFormStore")
 @observer
+class StepThree extends React.Component {
+  constructor(props) {
+    super(props);
+  }
+}
+
+@inject("stepFormStore")
+@observer
 class MethodPost extends React.Component {
   showStep = () => {
     switch (this.props.stepFormStore.current) {
       case 1:
         return <StepTwo />;
+      case 2:
+        return <StepThree />;
       default:
         return <StepTwo />;
     }
