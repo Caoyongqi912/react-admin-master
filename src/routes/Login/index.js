@@ -57,7 +57,8 @@ class Login extends React.Component {
         url
       })
     }).then(()=>{
-      //为什么写在then里？id为backgroundBox的DOM元素是在loading为false时才有，而上面的setState可能是异步的，必须等到setState执行完成后才去获取dom
+      //为什么写在then里？id为backgroundBox的DOM元素是在loading为false时才有，
+      //而上面的setState可能是异步的，必须等到setState执行完成后才去获取dom
       this.particle = new BGParticle('backgroundBox')
       this.particle.init()
       notification.open({

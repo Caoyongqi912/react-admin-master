@@ -6,7 +6,6 @@ import {
   Divider,
   Select,
   Steps,
-  Icon,
   Button,
   Form,
   BackTop,
@@ -15,7 +14,6 @@ import {
 } from "antd";
 import { inject, observer } from "mobx-react";
 import ".././css/formDeni2.css";
-import http from "../../../utils/request.js";
 
 const { Step } = Steps;
 const { Option } = Select;
@@ -32,26 +30,7 @@ const tailFormItemLayout = {
     offset: 5,
   },
 };
-const selectOpt = (
-  <Select placeholder="choice do" bordered>
-    <Option value="get">get</Option>
-    <Option value="click">click</Option>
-    <Option value="send_keys">send_keys</Option>
-    <Option value="get_text">get_text</Option>
-    <Option value="get_title">get_title</Option>
-    <Option value="get_url">get_url</Option>
-    <Option value="clear">clear</Option>
-    <Option value="action_click">action_click</Option>
-    <Option value="action_send_keys">action_send_keys</Option>
-    <Option value="go_back">go_back</Option>
-    <Option value="switch_window">switch_window</Option>
-    <Option value="screenshot">screenshot</Option>
-    <Option value="js">js</Option>
-    <Option value="sleep">sleep</Option>
-  </Select>
-);
 
-@inject("appStore")
 @inject("stepFormStore")
 @Form.create()
 @observer
@@ -63,20 +42,31 @@ class StepOne extends React.Component {
     };
   }
   componentDidMount = () => {
-    new Promise(() => {
-      http("get", "/projectOpt").then((res) => {
-        this.setState({ projectData: res.data });
+    let url = "http://127.0.0.1:5000/api/projectOpt";
+    axios
+      .get(url)
+      .then((response) => {
+        const result = response.data.data;
+        this.setState({ projectData: result });
+      })
+
+      .catch(function (error) {
+        console.log(error);
       });
-    });
   };
 
   nextStep = () => {
     this.props.form.validateFields((err, values) => {
+      console.log(err);
+      console.log(values);
       if (!err) {
         this.props.stepFormStore.setInfo(values);
         this.props.stepFormStore.setCurrent(1);
       }
     });
+  };
+  handleProjectChange = (value) => {
+    console.log(value);
   };
 
   render() {
@@ -85,7 +75,7 @@ class StepOne extends React.Component {
       <div>
         <Form className="stepForm" hideRequiredMark>
           <Form.Item {...formItemLayout} label="Project">
-            {getFieldDecorator("ProjectId", {
+            {getFieldDecorator("projectId", {
               initialValue: "",
               rules: [{ required: true, message: "选择项目" }],
             })(
@@ -100,7 +90,7 @@ class StepOne extends React.Component {
           </Form.Item>
 
           <Form.Item {...formItemLayout} label="methodName">
-            {getFieldDecorator("methodName", {
+            {getFieldDecorator("methName", {
               initialValue: "",
               rules: [{ required: true, message: "请输如方法名姓名" }],
             })(<Input placeholder="请输如方法名姓名" />)}
@@ -125,6 +115,24 @@ class StepOne extends React.Component {
   }
 }
 
+const selectOpt = (
+  <Select placeholder="choice do" bordered>
+    <Option value="get">get</Option>
+    <Option value="click">click</Option>
+    <Option value="send_keys">send_keys</Option>
+    <Option value="get_text">get_text</Option>
+    <Option value="get_title">get_title</Option>
+    <Option value="get_url">get_url</Option>
+    <Option value="clear">clear</Option>
+    <Option value="action_click">action_click</Option>
+    <Option value="action_send_keys">action_send_keys</Option>
+    <Option value="go_back">go_back</Option>
+    <Option value="switch_window">switch_window</Option>
+    <Option value="screenshot">screenshot</Option>
+    <Option value="js">js</Option>
+    <Option value="sleep">sleep</Option>
+  </Select>
+);
 
 @inject("stepFormStore")
 @Form.create()
@@ -135,17 +143,6 @@ class StepTwo extends React.Component {
     const { getFieldDecorator } = this.props.form;
 
     this.Titles = [
-      {
-        title: "id",
-        dataIndex: "id",
-        render: (text, record, index) => (
-          <Form.Item key={index}>
-            {getFieldDecorator(`methodBody[${index}].id`, {
-              initialValue: index,
-            })(<Input disabled />)}
-          </Form.Item>
-        ),
-      },
       {
         title: "name",
         dataIndex: "name",
@@ -171,9 +168,31 @@ class StepTwo extends React.Component {
         ),
       },
       {
+        title: "method",
+        dataIndex: "method",
+        width: "8%",
+        render: (text, record, index) => (
+          <Form.Item key={index}>
+            {getFieldDecorator(`methodBody[${index}].method`, {
+              initialValue: "",
+              rules: [{ required: false }],
+            })(
+              <Select placeholder="Please select" allowClear bordered>
+                {this.state.methods.map((item) => (
+                  <Option key={item.id} value={item.id}>
+                    {item.name}
+                  </Option>
+                ))}
+              </Select>
+            )}
+          </Form.Item>
+        ),
+      },
+      {
         title: "do",
         dataIndex: "do",
         width: "10%",
+
         render: (itext, record, index) => (
           <Form.Item {...formItemLayout} key={index}>
             {getFieldDecorator(`methodBody[${index}].do`, {
@@ -220,6 +239,42 @@ class StepTwo extends React.Component {
         ),
       },
       {
+        title: "data",
+        dataIndex: "data",
+        render: (text, record, index) => (
+          <Form.Item {...formItemLayout} key={index}>
+            {getFieldDecorator(`methodBody[${index}].data`, {
+              initialValue: "",
+              rules: [{ required: false }],
+            })(<Input placeholder="send data" />)}
+          </Form.Item>
+        ),
+      },
+      {
+        title: "variable",
+        dataIndex: "variable",
+        render: (text, record, index) => (
+          <Form.Item {...formItemLayout} key={index}>
+            {getFieldDecorator(`methodBody[${index}].variable`, {
+              initialValue: "",
+              rules: [{ required: false }],
+            })(<Input placeholder="send variable" />)}
+          </Form.Item>
+        ),
+      },
+      {
+        title: "validate",
+        dataIndex: "validate",
+        render: (text, record, index) => (
+          <Form.Item {...formItemLayout} key={index}>
+            {getFieldDecorator(`methodBody[${index}].validate`, {
+              initialValue: "",
+              rules: [{ required: false }],
+            })(<Input placeholder="send validate" />)}
+          </Form.Item>
+        ),
+      },
+      {
         title: "operation",
         dataIndex: "operation",
         render: (text, record) => {
@@ -236,21 +291,31 @@ class StepTwo extends React.Component {
     ];
     this.state = {
       loading: false,
+      methods: [],
       steps: [
         {
           key: 1,
-          id: "",
           name: "",
           desc: "",
+          method: "",
           do: "",
           locator: "",
           value: "",
           type: "",
+          data: "",
+          variable: "",
+          validate: "",
         },
       ],
       count: 2,
     };
   }
+
+  componentWillMount = async () => {
+    let res = await axios.get("http://127.0.0.1:5000/api/methodOpt");
+    let data = res.data.data;
+    this.setState({ methods: data });
+  };
 
   onDelete = (key) => {
     const arr = this.state.steps.slice();
@@ -263,12 +328,16 @@ class StepTwo extends React.Component {
     const { steps, count } = this.state;
     const newData = {
       key: count,
-      id:"",
       name: "",
       desc: "",
+      method: "",
       do: "",
       locator: "",
       value: "",
+      type: "",
+      data: "",
+      variable: "",
+      validate: "",
     };
     this.setState({
       steps: [...steps, newData],
@@ -278,19 +347,7 @@ class StepTwo extends React.Component {
 
   handleSubmit = () => {
     this.props.form.validateFields((err, values) => {
-      let methodData = {
-        methodName: this.props.stepFormStore.info.methodName,
-        methodDesc: this.props.stepFormStore.info.methodName,
-        ProjectId: this.props.stepFormStore.info.ProjectId,
-        methodBody: values,
-      };
-
-      new Promise(() => {
-        http("post", "/methodOpt", methodData).then((res) => {
-          console.log(res);
-        });
-      });
-
+      console.log(values);
       if (!err) {
         this.setState({
           loading: true,
@@ -350,54 +407,6 @@ class StepThree extends React.Component {
   constructor(props) {
     super(props);
   }
-
-  render() {
-    return (
-      <div id="step3">
-        <div>
-          <div className="icon-box">
-            <Icon type="check-circle" />
-          </div>
-          <div>
-            <h3 className="success">操作成功</h3>
-          </div>
-          <Form className="result">
-            <Form.Item>
-              <Form.Item
-                {...formItemLayout}
-                className="setFormText"
-                label="Project"
-              >
-                {this.props.stepFormStore.info.ProjectId}
-              </Form.Item>
-              <Form.Item
-                {...formItemLayout}
-                style={{ marginBottom: 18 }}
-                label="Name"
-              >
-                {this.props.stepFormStore.info.methodName}
-              </Form.Item>
-              <Form.Item
-                {...formItemLayout}
-                className="setFormText"
-                label="Desc"
-              >
-                {this.props.stepFormStore.info.methodDesc}
-              </Form.Item>
-            </Form.Item>
-          </Form>
-          <div>
-            <Button
-              type="primary"
-              onClick={() => this.props.stepFormStore.setCurrent(0)}
-            >
-              再创建一个
-            </Button>
-          </div>
-        </div>
-      </div>
-    );
-  }
 }
 
 @inject("stepFormStore")
@@ -410,7 +419,7 @@ class MethodPost extends React.Component {
       case 2:
         return <StepThree />;
       default:
-        return <StepOne />;
+        return <StepTwo />;
     }
   };
   render() {

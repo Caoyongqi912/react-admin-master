@@ -4,6 +4,7 @@ import { withRouter } from 'react-router-dom'
 import { inject, observer } from 'mobx-react/index'
 import { Form, Input, Row, Col } from 'antd'
 import PromptBox from '../../components/PromptBox'
+import http from "../../utils/request.js"
 
 
 @withRouter @inject('appStore') @observer @Form.create()
@@ -50,12 +51,24 @@ class LoginForm extends React.Component {
       code
     })
   }
+
+
+
   loginSubmit = (e) => {
     e.preventDefault()
     this.setState({
       focusItem: -1
     })
     this.props.form.validateFields((err, values) => {
+      
+      console.log(values)
+      new Promise(()=>{
+        http("get",'/getToken').then(res=>{
+          console.log(res.data)
+        })
+      })
+
+
       if (!err) {
         // 表单登录时，若验证码长度小于4则不会验证，所以我们这里要手动验证一次，线上的未修复
         if (this.state.code.toUpperCase() !== values.verification.toUpperCase()) {

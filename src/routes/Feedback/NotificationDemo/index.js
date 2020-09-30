@@ -58,7 +58,7 @@ class NotificationDemo extends React.Component{
           </Col>
           <Col span={12}>
             <Card bordered={false} className='card-item'>
-             <Button type='primary' onClick={()=>this.openNotificationType('success')}>成功</Button>&emsp;
+             <Button type='primary' onClick={()=>this.openNotificationType('success')}>dadasd成功</Button>&emsp;
              <Button type='primary' onClick={()=>this.openNotificationType('info')}>提醒</Button>&emsp;
              <Button type='primary' onClick={()=>this.openNotificationType('warning')}>警告</Button>&emsp;
              <Button type='primary' onClick={()=>this.openNotificationType('error')}>错误</Button>
