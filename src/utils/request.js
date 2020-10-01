@@ -3,7 +3,6 @@
  */
 import axios from "axios";
 
-axios.defaults.timeout = 100000;
 axios.defaults.baseURL = "http://127.0.0.1:5000/api";
 
 /**
@@ -16,9 +15,9 @@ axios.interceptors.request.use(
       "Content-Type": "application/json",
 
     };
+    
     config.auth ={
-        username:"cyq",
-        password:"cyq"
+        username:localStorage['TOKEN']?localStorage['TOKEN']:null,
     }
 
 
@@ -155,7 +154,7 @@ export function del(url, data) {
 
 //统一接口处理，返回数据
 export default function (fecth, url, param) {
-  let _data = "";
+
   return new Promise((resolve, reject) => {
     switch (fecth) {
       case "get":

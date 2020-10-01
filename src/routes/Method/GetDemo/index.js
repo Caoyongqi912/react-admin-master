@@ -24,13 +24,9 @@ class Method extends React.Component {
         dataIndex: "desc",
       },
       {
-        title: "body",
+        title: "opt",
         render: (text, record) => (
           <span>
-            <a className="ant-dropdown-link" onClick={() => {}}>
-              detail <Icon type="down" />
-            </a>
-            <Divider type="vertical" />
             <a onClick={() => this.onclick(record.id)}>Delete</a>
           </span>
         ),
@@ -65,6 +61,7 @@ class Method extends React.Component {
     ];
     this.state = {
       info: [],
+      body:[]
     };
   }
 
@@ -74,9 +71,9 @@ class Method extends React.Component {
       http("del", "/methodOpt", data).then((res) => {
         if (res.code === 1) {
           this.openNotificationType("success", res.msg);
-          const arr = this.state.resData.slice();
+          const arr = this.state.info.slice();
           this.setState({
-            resData: arr.filter((item) => item.id !== id),
+            info: arr.filter((item) => item.id !== id),
           });
         } else {
           this.openNotificationType("error", res.err);
@@ -94,8 +91,13 @@ class Method extends React.Component {
   componentDidMount = () => {
     new Promise(() => {
       http("get", "/methodOpt").then((res) => {
-        console.log(res.data);
-        this.setState({ info: res.data });
+        let body = [];
+        for (let index = 0; index < res.data.length; index++) {
+          const element = res.data[index].body;
+          body.push(element)
+        }
+
+        this.setState({ info: res.data,body:body });
       });
     });
   };
@@ -113,7 +115,7 @@ class Method extends React.Component {
             dataSource={this.state.info}
             columns={this.Titles}
             style={styles.tableStyle}
-            expandedRowRender={(record) => <Table columns={this.DETAIL}  dataSource={this.state.info.body}/>}
+            expandedRowRender={(record) =>{console.log(record.id)} }
           />
         </Card>
         <BackTop visibilityHeight={200} style={{ right: 50 }} />

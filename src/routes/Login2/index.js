@@ -68,14 +68,7 @@ class LoginForm extends React.Component {
     const {focusItem} = this.state
     return (
       <div className={this.props.className}>
-        <div className='owl'>
-          <div className='hand-left hand' style={focusItem === 1 ? styles.focusHandLeft : {}}/>
-          <div className='hand-right hand' style={focusItem === 1 ? styles.focusHandRight : {}}/>
-          <div className='arms-box'>
-            <div className='arms arms-left' style={focusItem === 1 ? styles.focusArmsLeft : {}}/>
-            <div className='arms arms-right' style={focusItem === 1 ? styles.focusArmsRight : {}}/>
-          </div>
-        </div>
+      
         <Form onSubmit={this.loginSubmit}>
           <Form.Item>
             {getFieldDecorator('username', {
@@ -104,40 +97,9 @@ class LoginForm extends React.Component {
                 size='large'/>
             )}
           </Form.Item>
-          <Form.Item>
-            {getFieldDecorator('verification', {
-              validateFirst: true,
-              rules: [
-                {required: true, message: '请输入验证码'},
-                {
-                  validator: (rule, value, callback) => {
-                    if (value.length >= 4 && !this.verifyCode.validate(value)) {
-                      callback('验证码错误')
-                    }
-                    callback()
-                  }
-                }
-              ]
-            })(
-              <Row gutter={8}>
-                <Col span={16}>
-                  <Input
-                    placeholder='验证码'
-                    addonBefore={<span className='iconfont icon-securityCode-b'
-                                       style={focusItem === 2 ? styles.focus : {}}/>}
-                    onFocus={() => this.setState({focusItem: 2})}
-                    onBlur={() => this.setState({focusItem: -1})}
-                    size='large'/>
-                </Col>
-                <Col span={8}>
-                  <div id='v_container' style={{height: 40}}/>
-                </Col>
-              </Row>
-            )}
-          </Form.Item>
           <div className='bottom'>
             <span className='registerBtn' onClick={this.register}>注册</span>&emsp;
-            <Button type='primary' htmlType="submit">登录</Button>
+            <Button type='primary' htmlType="submit">登1录</Button>
           </div>
         </Form>
       </div>

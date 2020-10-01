@@ -1,5 +1,4 @@
 import React from "react";
-import axios from "axios";
 import {
   Card,
   Table,
@@ -306,10 +305,6 @@ class StepTwo extends React.Component {
   };
 
   render() {
-    const {
-      form: { getFieldDecorator },
-      steps,
-    } = this.props;
     return (
       <div>
         <hr />
