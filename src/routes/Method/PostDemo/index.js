@@ -279,9 +279,9 @@ class StepTwo extends React.Component {
     this.props.form.validateFields((err, values) => {
       let methodData = {
         methodName: this.props.stepFormStore.info.methodName,
-        methodDesc: this.props.stepFormStore.info.methodName,
+        methodDesc: this.props.stepFormStore.info.methodDesc,
         ProjectId: this.props.stepFormStore.info.ProjectId,
-        methodBody: values,
+        body: values,
       };
 
       new Promise(() => {
@@ -289,7 +289,6 @@ class StepTwo extends React.Component {
           console.log(res);
         });
       });
-
       if (!err) {
         this.setState({
           loading: true,
@@ -298,7 +297,7 @@ class StepTwo extends React.Component {
           this.setState({
             loading: false,
           });
-          this.props.stepFormStore.setCurrent(1);
+          this.props.stepFormStore.setCurrent(2);
         }, 2000);
       }
     });

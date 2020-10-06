@@ -50,6 +50,11 @@ const MethodGet = LoadableComponent(()=>import("../../routes/Method/GetDemo/inde
 const MethodPost = LoadableComponent(()=>import("../../routes/Method/PostDemo/index"))
 
 
+//ucase
+
+const uCaseGet = LoadableComponent(()=>import("../../routes/Ucase/GET/index"))
+const uCasePost = LoadableComponent(()=>import("../../routes/Ucase/POST/index"))
+
 @withRouter
 class ContentMain extends React.Component {
   render () {
@@ -61,6 +66,8 @@ class ContentMain extends React.Component {
           <PrivateRoute exact path='/home/method/get' component={MethodGet}/>
           <PrivateRoute exact path='/home/method/post' component={MethodPost}/>
 
+          <PrivateRoute exact path='/home/uCase/get' component={uCaseGet}/>
+          <PrivateRoute exact path='/home/uCase/post' component={uCasePost}/>
 
           <PrivateRoute exact path='/home/general/button' component={ButtonDemo}/>
           <PrivateRoute exact path='/home/general/icon' component={IconDemo}/>

@@ -1,5 +1,5 @@
 import React from "react";
-import { Card, Icon, notification, Table, Divider, BackTop } from "antd";
+import { Card, notification, Table, BackTop } from "antd";
 import http from "../../../utils/request.js";
 
 class Method extends React.Component {
@@ -32,7 +32,33 @@ class Method extends React.Component {
         ),
       },
     ];
-
+    this.infoTitles = [
+      {
+        title: "name",
+        dataIndex: "name",
+      },
+      {
+        title: "desc",
+        dataIndex: "desc",
+      },
+      {
+        title: "locator",
+        dataIndex: "locator",
+      },
+      {
+        title: "type",
+        dataIndex: "type",
+      },
+      {
+        title: "do",
+        dataIndex: "do",
+      },
+      {
+        title: "value",
+        dataIndex: "value",
+      },
+      
+    ]
     this.DETAIL = [
       {
         title: "name",
@@ -96,11 +122,15 @@ class Method extends React.Component {
           const element = res.data[index].body;
           body.push(element)
         }
-
         this.setState({ info: res.data,body:body });
       });
     });
   };
+
+  expandedRowRender = (expandedRows) => {
+    console.log(expandedRows)
+    return <Table dataSource={expandedRows.body} columns={this.infoTitles} />
+  }
 
   render() {
     return (
@@ -115,7 +145,7 @@ class Method extends React.Component {
             dataSource={this.state.info}
             columns={this.Titles}
             style={styles.tableStyle}
-            expandedRowRender={(record) =>{console.log(record.id)} }
+            expandedRowRender={this.expandedRowRender}
           />
         </Card>
         <BackTop visibilityHeight={200} style={{ right: 50 }} />

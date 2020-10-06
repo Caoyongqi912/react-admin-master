@@ -12,7 +12,6 @@ class LoginForm extends React.Component {
   state = {
     focusItem: -1,   //保存当前聚焦的input
   }
-
   loginSubmit = (e) => {
     e.preventDefault()
     this.setState({
@@ -26,9 +25,8 @@ class LoginForm extends React.Component {
        
         http("post",'/login',values).then(res=>{
           console.log(res)
-
           if (!err){
-            localStorage.setItem('TOKEN',res)
+            localStorage.setItem('TOKEN',res.token)
             this.props.appStore.toggleLogin(true, {username:values.username})
             const {from} = this.props.location.state || {from: {pathname: '/'}}
             this.props.history.push(from)
@@ -43,7 +41,6 @@ class LoginForm extends React.Component {
     this.props.switchShowBox('register')
     setTimeout(() => this.props.form.resetFields(), 500)
   }
-
   render () {
     const {getFieldDecorator, getFieldError} = this.props.form
     const {focusItem} = this.state
@@ -78,14 +75,14 @@ class LoginForm extends React.Component {
                 addonBefore={<span className='iconfont icon-suo1' style={focusItem === 1 ? styles.focus : {}}/>}/>
             )}
           </Form.Item>
-
           <div className='bottom'>
             <input className='loginBtn' type="submit" value='登录'/>
             <span className='registerBtn' onClick={this.register}>注册</span>
           </div>
         </Form>
         <div className='footer'>
-          <div>欢迎登陆后台管理系统</div>
+          <div><p>默认账号：cyq</p></div>
+          <div><p>默认账号：cyq</p></div>
         </div>
       </div>
     )

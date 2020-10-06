@@ -17,6 +17,15 @@ const menus = [
     ]
   },
   {
+    title: 'UI自动化用例',
+    icon: 'laptop',
+    key: '/home/uCase',
+    subs: [
+      {key: '/home/uCase/get', title: '测试用例', icon: '',},
+      {key: '/home/uCase/post', title: '添加用例', icon: '',},
+    ]
+  },
+  {
     title: '基本组件',
     icon: 'laptop',
     key: '/home/general',

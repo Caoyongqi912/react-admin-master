@@ -1,11 +1,11 @@
 import React from "react";
-import axios from "axios";
 import {
   Card,
   Table,
   Divider,
   Select,
   Steps,
+  Icon,
   Button,
   Form,
   BackTop,
@@ -13,7 +13,8 @@ import {
   Input,
 } from "antd";
 import { inject, observer } from "mobx-react";
-import ".././css/formDeni2.css";
+import "../css/formDeni2.css";
+import http from "../../../utils/request.js";
 
 const { Step } = Steps;
 const { Option } = Select;
@@ -30,7 +31,26 @@ const tailFormItemLayout = {
     offset: 5,
   },
 };
+const selectOpt = (
+  <Select placeholder="choice do" bordered>
+    <Option value="get">get</Option>
+    <Option value="click">click</Option>
+    <Option value="send_keys">send_keys</Option>
+    <Option value="get_text">get_text</Option>
+    <Option value="get_title">get_title</Option>
+    <Option value="get_url">get_url</Option>
+    <Option value="clear">clear</Option>
+    <Option value="action_click">action_click</Option>
+    <Option value="action_send_keys">action_send_keys</Option>
+    <Option value="go_back">go_back</Option>
+    <Option value="switch_window">switch_window</Option>
+    <Option value="screenshot">screenshot</Option>
+    <Option value="js">js</Option>
+    <Option value="sleep">sleep</Option>
+  </Select>
+);
 
+@inject("appStore")
 @inject("stepFormStore")
 @Form.create()
 @observer
@@ -42,31 +62,20 @@ class StepOne extends React.Component {
     };
   }
   componentDidMount = () => {
-    let url = "http://127.0.0.1:5000/api/projectOpt";
-    axios
-      .get(url)
-      .then((response) => {
-        const result = response.data.data;
-        this.setState({ projectData: result });
-      })
-
-      .catch(function (error) {
-        console.log(error);
+    new Promise(() => {
+      http("get", "/projectOpt").then((res) => {
+        this.setState({ projectData: res.data });
       });
+    });
   };
 
   nextStep = () => {
     this.props.form.validateFields((err, values) => {
-      console.log(err);
-      console.log(values);
       if (!err) {
         this.props.stepFormStore.setInfo(values);
         this.props.stepFormStore.setCurrent(1);
       }
     });
-  };
-  handleProjectChange = (value) => {
-    console.log(value);
   };
 
   render() {
@@ -89,15 +98,15 @@ class StepOne extends React.Component {
             )}
           </Form.Item>
 
-          <Form.Item {...formItemLayout} label="methodName">
-            {getFieldDecorator("methName", {
+          <Form.Item {...formItemLayout} label="caseName">
+            {getFieldDecorator("caseName", {
               initialValue: "",
-              rules: [{ required: true, message: "请输如方法名姓名" }],
-            })(<Input placeholder="请输如方法名姓名" />)}
+              rules: [{ required: true, message: "请输用例名" }],
+            })(<Input placeholder="请输用例名" />)}
           </Form.Item>
 
-          <Form.Item {...formItemLayout} label="methodDesc">
-            {getFieldDecorator("methodDesc", {
+          <Form.Item {...formItemLayout} label="请输入详情">
+            {getFieldDecorator("请输入详情", {
               initialValue: "",
             })(<Input placeholder="请输入详情" />)}
           </Form.Item>
@@ -115,24 +124,6 @@ class StepOne extends React.Component {
   }
 }
 
-const selectOpt = (
-  <Select placeholder="choice do" bordered>
-    <Option value="get">get</Option>
-    <Option value="click">click</Option>
-    <Option value="send_keys">send_keys</Option>
-    <Option value="get_text">get_text</Option>
-    <Option value="get_title">get_title</Option>
-    <Option value="get_url">get_url</Option>
-    <Option value="clear">clear</Option>
-    <Option value="action_click">action_click</Option>
-    <Option value="action_send_keys">action_send_keys</Option>
-    <Option value="go_back">go_back</Option>
-    <Option value="switch_window">switch_window</Option>
-    <Option value="screenshot">screenshot</Option>
-    <Option value="js">js</Option>
-    <Option value="sleep">sleep</Option>
-  </Select>
-);
 
 @inject("stepFormStore")
 @Form.create()
@@ -141,17 +132,45 @@ class StepTwo extends React.Component {
   constructor(props) {
     super(props);
     const { getFieldDecorator } = this.props.form;
-
+    this.state = {
+      loading: false,
+      method:[],
+      steps: [
+        {
+          key: 1,
+          id: "",
+          name: "",
+          desc: "",
+          do: "",
+          locator: "",
+          value: "",
+          type: "",
+        },
+      ],
+      count: 2,
+    };
     this.Titles = [
+      {
+        title: "id",
+        dataIndex: "id",
+        width:"7%",
+        render: (text, record, index) => (
+          <Form.Item key={index}>
+            {getFieldDecorator(`caseSteps[${index}].id`, {
+              initialValue: index,
+            })(<Input disabled />)}
+          </Form.Item>
+        ),
+      },
       {
         title: "name",
         dataIndex: "name",
         render: (text, record, index) => (
           <Form.Item key={index}>
-            {getFieldDecorator(`methodBody[${index}].name`, {
+            {getFieldDecorator(`caseSteps[${index}].name`, {
               initialValue: "",
               rules: [{ required: true, message: "name cannot be empty" }],
-            })(<Input placeholder="plase send name" />)}
+            })(<Input placeholder="place send name" />)}
           </Form.Item>
         ),
       },
@@ -160,7 +179,7 @@ class StepTwo extends React.Component {
         dataIndex: "desc",
         render: (text, record, index) => (
           <Form.Item key={index}>
-            {getFieldDecorator(`methodBody[${index}].desc`, {
+            {getFieldDecorator(`caseSteps[${index}].desc`, {
               initialValue: "",
               rules: [{ required: false }],
             })(<Input placeholder="send desc" />)}
@@ -168,23 +187,21 @@ class StepTwo extends React.Component {
         ),
       },
       {
-        title: "method",
-        dataIndex: "method",
-        width: "8%",
+        title: "useMethod",
+        dataIndex: "is_method",
+        width: "10%",
         render: (text, record, index) => (
-          <Form.Item key={index}>
-            {getFieldDecorator(`methodBody[${index}].method`, {
+          <Form.Item {...formItemLayout} key={index}>
+            {getFieldDecorator(`caseSteps[${index}].is_method`, {
               initialValue: "",
-              rules: [{ required: false }],
-            })(
-              <Select placeholder="Please select" allowClear bordered>
-                {this.state.methods.map((item) => (
-                  <Option key={item.id} value={item.id}>
-                    {item.name}
-                  </Option>
-                ))}
-              </Select>
-            )}
+              rules: [{ required: false, message: "must choice do method" }],
+            })(<Select style={{ width: "100%" }} placeholder="choice method">
+            {this.state.method.map((item) => (
+              <Option key={item.id} value={item.id}>
+                {item.name}
+              </Option>
+            ))}
+          </Select>)}
           </Form.Item>
         ),
       },
@@ -192,10 +209,9 @@ class StepTwo extends React.Component {
         title: "do",
         dataIndex: "do",
         width: "10%",
-
         render: (itext, record, index) => (
           <Form.Item {...formItemLayout} key={index}>
-            {getFieldDecorator(`methodBody[${index}].do`, {
+            {getFieldDecorator(`caseSteps[${index}].do`, {
               initialValue: "",
               rules: [{ required: true, message: "must choice do method" }],
             })(selectOpt)}
@@ -207,7 +223,7 @@ class StepTwo extends React.Component {
         dataIndex: "type",
         render: (text, record, index) => (
           <Form.Item {...formItemLayout} key={index}>
-            {getFieldDecorator(`methodBody[${index}].type`, {
+            {getFieldDecorator(`caseSteps[${index}].type`, {
               initialValue: "",
               rules: [{ required: true, message: "type cannot be empty" }],
             })(<Input placeholder="send type" />)}
@@ -219,7 +235,7 @@ class StepTwo extends React.Component {
         dataIndex: "locator",
         render: (text, record, index) => (
           <Form.Item {...formItemLayout} key={index}>
-            {getFieldDecorator(`methodBody[${index}].locator`, {
+            {getFieldDecorator(`caseSteps[${index}].locator`, {
               initialValue: "",
               rules: [{ required: true, message: "locator cannot be empty" }],
             })(<Input placeholder="send locator" />)}
@@ -231,22 +247,10 @@ class StepTwo extends React.Component {
         dataIndex: "value",
         render: (text, record, index) => (
           <Form.Item {...formItemLayout} key={index}>
-            {getFieldDecorator(`methodBody[${index}].value`, {
+            {getFieldDecorator(`caseSteps[${index}].value`, {
               initialValue: "",
               rules: [{ required: false }],
             })(<Input placeholder="send value" />)}
-          </Form.Item>
-        ),
-      },
-      {
-        title: "data",
-        dataIndex: "data",
-        render: (text, record, index) => (
-          <Form.Item {...formItemLayout} key={index}>
-            {getFieldDecorator(`methodBody[${index}].data`, {
-              initialValue: "",
-              rules: [{ required: false }],
-            })(<Input placeholder="send data" />)}
           </Form.Item>
         ),
       },
@@ -255,10 +259,10 @@ class StepTwo extends React.Component {
         dataIndex: "variable",
         render: (text, record, index) => (
           <Form.Item {...formItemLayout} key={index}>
-            {getFieldDecorator(`methodBody[${index}].variable`, {
+            {getFieldDecorator(`caseSteps[${index}].variable`, {
               initialValue: "",
               rules: [{ required: false }],
-            })(<Input placeholder="send variable" />)}
+            })(<Input placeholder="send value" />)}
           </Form.Item>
         ),
       },
@@ -267,7 +271,7 @@ class StepTwo extends React.Component {
         dataIndex: "validate",
         render: (text, record, index) => (
           <Form.Item {...formItemLayout} key={index}>
-            {getFieldDecorator(`methodBody[${index}].validate`, {
+            {getFieldDecorator(`caseSteps[${index}].validate`, {
               initialValue: "",
               rules: [{ required: false }],
             })(<Input placeholder="send validate" />)}
@@ -289,55 +293,30 @@ class StepTwo extends React.Component {
         },
       },
     ];
-    this.state = {
-      loading: false,
-      methods: [],
-      steps: [
-        {
-          key: 1,
-          name: "",
-          desc: "",
-          method: "",
-          do: "",
-          locator: "",
-          value: "",
-          type: "",
-          data: "",
-          variable: "",
-          validate: "",
-        },
-      ],
-      count: 2,
-    };
   }
-
-  componentWillMount = async () => {
-    let res = await axios.get("http://127.0.0.1:5000/api/methodOpt");
-    let data = res.data.data;
-    this.setState({ methods: data });
-  };
-
+  componentDidMount=()=>{
+    new Promise(() => {
+      http("get", "/methodOpt").then((res) => {      
+        this.setState({method:res.data})
+      });
+    });
+  }
   onDelete = (key) => {
     const arr = this.state.steps.slice();
     this.setState({
       steps: arr.filter((item) => item.key !== key),
     });
   };
-
   handleAdd = () => {
     const { steps, count } = this.state;
     const newData = {
       key: count,
+      id:"",
       name: "",
       desc: "",
-      method: "",
       do: "",
       locator: "",
       value: "",
-      type: "",
-      data: "",
-      variable: "",
-      validate: "",
     };
     this.setState({
       steps: [...steps, newData],
@@ -347,7 +326,19 @@ class StepTwo extends React.Component {
 
   handleSubmit = () => {
     this.props.form.validateFields((err, values) => {
-      console.log(values);
+      let caseData = {
+        caseName: this.props.stepFormStore.info.caseName,
+        caseDesc: this.props.stepFormStore.info.caseDesc,
+        projectId: this.props.stepFormStore.info.projectId,
+        caseSteps: values.caseSteps,
+      };
+      console.log(caseData)
+
+      new Promise(() => {
+        http("post", "/uCaseOpt", caseData).then((res) => {
+          console.log(res);
+        });
+      });
       if (!err) {
         this.setState({
           loading: true,
@@ -356,17 +347,13 @@ class StepTwo extends React.Component {
           this.setState({
             loading: false,
           });
-          this.props.stepFormStore.setCurrent(1);
+          this.props.stepFormStore.setCurrent(2);
         }, 2000);
       }
     });
   };
 
   render() {
-    const {
-      form: { getFieldDecorator },
-      steps,
-    } = this.props;
     return (
       <div>
         <hr />
@@ -407,11 +394,59 @@ class StepThree extends React.Component {
   constructor(props) {
     super(props);
   }
+
+  render() {
+    return (
+      <div id="step3">
+        <div>
+          <div className="icon-box">
+            <Icon type="check-circle" />
+          </div>
+          <div>
+            <h3 className="success">操作成功</h3>
+          </div>
+          <Form className="result">
+            <Form.Item>
+              <Form.Item
+                {...formItemLayout}
+                className="setFormText"
+                label="Project"
+              >
+                {this.props.stepFormStore.info.projectId}
+              </Form.Item>
+              <Form.Item
+                {...formItemLayout}
+                style={{ marginBottom: 18 }}
+                label="Name"
+              >
+                {this.props.stepFormStore.info.caseName}
+              </Form.Item>
+              <Form.Item
+                {...formItemLayout}
+                className="setFormText"
+                label="Desc"
+              >
+                {this.props.stepFormStore.info.caseDesc}
+              </Form.Item>
+            </Form.Item>
+          </Form>
+          <div>
+            <Button
+              type="primary"
+              onClick={() => this.props.stepFormStore.setCurrent(0)}
+            >
+              再创建一个
+            </Button>
+          </div>
+        </div>
+      </div>
+    );
+  }
 }
 
 @inject("stepFormStore")
 @observer
-class MethodPost extends React.Component {
+class CasePost extends React.Component {
   showStep = () => {
     switch (this.props.stepFormStore.current) {
       case 1:
@@ -419,7 +454,7 @@ class MethodPost extends React.Component {
       case 2:
         return <StepThree />;
       default:
-        return <StepTwo />;
+        return <StepOne />;
     }
   };
   render() {
@@ -442,4 +477,4 @@ const styles = {
   width: "100%",
 };
 
-export default MethodPost;
+export default CasePost;
