@@ -124,7 +124,6 @@ class StepOne extends React.Component {
   }
 }
 
-
 @inject("stepFormStore")
 @Form.create()
 @observer
@@ -134,7 +133,7 @@ class StepTwo extends React.Component {
     const { getFieldDecorator } = this.props.form;
     this.state = {
       loading: false,
-      method:[],
+      method: [],
       steps: [
         {
           key: 1,
@@ -153,7 +152,7 @@ class StepTwo extends React.Component {
       {
         title: "id",
         dataIndex: "id",
-        width:"7%",
+        width: "7%",
         render: (text, record, index) => (
           <Form.Item key={index}>
             {getFieldDecorator(`caseSteps[${index}].id`, {
@@ -195,13 +194,15 @@ class StepTwo extends React.Component {
             {getFieldDecorator(`caseSteps[${index}].is_method`, {
               initialValue: "",
               rules: [{ required: false, message: "must choice do method" }],
-            })(<Select style={{ width: "100%" }} placeholder="choice method">
-            {this.state.method.map((item) => (
-              <Option key={item.id} value={item.id}>
-                {item.name}
-              </Option>
-            ))}
-          </Select>)}
+            })(
+              <Select style={{ width: "100%" }} placeholder="choice method">
+                {this.state.method.map((item) => (
+                  <Option key={item.id} value={item.id}>
+                    {item.name}
+                  </Option>
+                ))}
+              </Select>
+            )}
           </Form.Item>
         ),
       },
@@ -294,13 +295,13 @@ class StepTwo extends React.Component {
       },
     ];
   }
-  componentDidMount=()=>{
+  componentDidMount = () => {
     new Promise(() => {
-      http("get", "/methodOpt").then((res) => {      
-        this.setState({method:res.data})
+      http("get", "/methodOpt").then((res) => {
+        this.setState({ method: res.data });
       });
     });
-  }
+  };
   onDelete = (key) => {
     const arr = this.state.steps.slice();
     this.setState({
@@ -311,7 +312,7 @@ class StepTwo extends React.Component {
     const { steps, count } = this.state;
     const newData = {
       key: count,
-      id:"",
+      id: "",
       name: "",
       desc: "",
       do: "",
@@ -332,7 +333,7 @@ class StepTwo extends React.Component {
         projectId: this.props.stepFormStore.info.projectId,
         caseSteps: values.caseSteps,
       };
-      console.log(caseData)
+      console.log(caseData);
 
       new Promise(() => {
         http("post", "/uCaseOpt", caseData).then((res) => {
@@ -393,6 +394,7 @@ class StepTwo extends React.Component {
 class StepThree extends React.Component {
   constructor(props) {
     super(props);
+    this.state = {};
   }
 
   render() {

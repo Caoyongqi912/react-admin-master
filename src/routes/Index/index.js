@@ -4,7 +4,7 @@ import SiderNav from '../../components/SiderNav'
 import ContentMain from '../../components/ContentMain'
 import HeaderBar from '../../components/HeaderBar'
 
-const {Sider, Header, Content, Footer} = Layout
+const {Sider, Header, Content} = Layout
 
 
 class Index extends React.Component{
@@ -36,7 +36,6 @@ class Index extends React.Component{
             <Content>
               <ContentMain/>
             </Content>
-            <Footer style={{textAlign: 'center'}}>React-Admin ©2018 Created by 137596665@qq.com <a target='_blank' href='https://github.com/zhangZhiHao1996/react-admin-master'>github地址</a></Footer>
           </Layout>
         </Layout>
       </div>

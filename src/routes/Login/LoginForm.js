@@ -2,7 +2,7 @@ import React from 'react'
 import {calculateWidth } from '../../utils/utils'
 import { withRouter } from 'react-router-dom'
 import { inject, observer } from 'mobx-react/index'
-import { Form, Input } from 'antd'
+import { Form, Input ,message} from 'antd'
 import PromptBox from '../../components/PromptBox'
 import http from "../../utils/request.js"
 
@@ -18,20 +18,25 @@ class LoginForm extends React.Component {
       focusItem: -1
     })
 
-    this.props.form.validateFields((err, values) => {
 
-      console.log(values)
+
+    this.props.form.validateFields((err, values) => {
       new Promise(()=>{
-       
+      
         http("post",'/login',values).then(res=>{
           console.log(res)
-          if (!err){
-            localStorage.setItem('TOKEN',res.token)
+          let resp = res.data
+
+          if  (res.data.code === 0) {
+            localStorage.setItem('TOKEN',resp.data)
             this.props.appStore.toggleLogin(true, {username:values.username})
             const {from} = this.props.location.state || {from: {pathname: '/'}}
             this.props.history.push(from)
+            
+          }else{
+            message.error(resp.msg);          }
 
-          }
+     
 
         })
       })

@@ -13,13 +13,14 @@ class AppStore {
       this.isLogin = true
     } else {
       logout()
+      localStorage.removeItem('TOKEN')
       this.isLogin = false
     }
 
   }
-  @action initUsers() {
-    const localUsers = localStorage['users']?JSON.parse(localStorage['users']):[]
-  }
+  // @action initUsers() {
+  //   const localUsers = localStorage['users']?JSON.parse(localStorage['users']):[]
+  // }
 }
 
 export default new AppStore()

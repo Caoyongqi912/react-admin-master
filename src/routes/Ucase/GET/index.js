@@ -102,15 +102,15 @@ class uCase extends React.Component{
         const data = { caseId: id };
         new Promise(() => {
           http("del", "/uCaseOpt", data).then((res) => {
-            if (res.code === 1) {
-              this.openNotificationType("success", res.msg);
+            if (res.code === 0) {
+              this.openNotificationType("success", res.data.msg);
               const arr = this.state.caseInfo.slice();
               console.log(arr)
               this.setState({
                 caseInfo: arr.filter((item) => item.id !== id),
               });
             } else {
-              this.openNotificationType("error", res.err);
+              this.openNotificationType("error", res.data.msg);
             }
           });
         });

@@ -75,7 +75,7 @@ export function post(url, data) {
     axios.post(url, data).then(
       (response) => {
         //关闭进度条
-        resolve(response.data);
+        resolve(response);
       },
       (err) => {
         reject(err);
@@ -94,7 +94,7 @@ export function patch(url, data = {}) {
   return new Promise((resolve, reject) => {
     axios.patch(url, data).then(
       (response) => {
-        resolve(response.data);
+        resolve(response);
       },
       (err) => {
         msag(err);
@@ -115,7 +115,7 @@ export function put(url, data) {
   return new Promise((resolve, reject) => {
     axios.put(url, data).then(
       (response) => {
-        resolve(response.data);
+        resolve(response);
       },
       (err) => {
         msag(err);
@@ -138,7 +138,7 @@ export function del(url, data) {
   return new Promise((resolve, reject) => {
     axios.delete(url, {data:data}).then(
       (response) => {
-        resolve(response.data);
+        resolve(response);
       },
       (err) => {
         msag(err);

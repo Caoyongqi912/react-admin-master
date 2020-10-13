@@ -29,6 +29,7 @@ class Method extends React.Component {
           <span>
             <a onClick={() => this.onclick(record.id)}>Delete</a>
           </span>
+          
         ),
       },
     ];
@@ -57,8 +58,7 @@ class Method extends React.Component {
         title: "value",
         dataIndex: "value",
       },
-      
-    ]
+    ];
     this.DETAIL = [
       {
         title: "name",
@@ -87,7 +87,7 @@ class Method extends React.Component {
     ];
     this.state = {
       info: [],
-      body:[]
+      body: [],
     };
   }
 
@@ -95,14 +95,15 @@ class Method extends React.Component {
     const data = { methodId: id };
     new Promise(() => {
       http("del", "/methodOpt", data).then((res) => {
-        if (res.code === 1) {
-          this.openNotificationType("success", res.msg);
+        let resp = res.data
+        if (resp.code === 0) {
+          this.openNotificationType("success", resp.msg);
           const arr = this.state.info.slice();
           this.setState({
             info: arr.filter((item) => item.id !== id),
           });
         } else {
-          this.openNotificationType("error", res.err);
+          this.openNotificationType("error", resp.msg);
         }
       });
     });
@@ -117,20 +118,25 @@ class Method extends React.Component {
   componentDidMount = () => {
     new Promise(() => {
       http("get", "/methodOpt").then((res) => {
-        let body = [];
+        let methodBody = [];
         for (let index = 0; index < res.data.length; index++) {
-          const element = res.data[index].body;
-          body.push(element)
+          const element = res.data[index].methodBody;
+          methodBody.push(element);
         }
-        this.setState({ info: res.data,body:body });
+        this.setState({ info: res.data, body: methodBody });
       });
     });
   };
 
   expandedRowRender = (expandedRows) => {
-    console.log(expandedRows)
-    return <Table dataSource={expandedRows.body} columns={this.infoTitles} />
-  }
+    return (
+      <Table
+        dataSource={expandedRows.methodBody}
+        columns={this.infoTitles}
+        pagination={false}
+      />
+    );
+  };
 
   render() {
     return (

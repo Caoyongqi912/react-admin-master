@@ -10,6 +10,7 @@ import {
   Form,
   BackTop,
   Popconfirm,
+  notification,
   Input,
 } from "antd";
 import { inject, observer } from "mobx-react";
@@ -123,7 +124,6 @@ class StepOne extends React.Component {
     );
   }
 }
-
 
 @inject("stepFormStore")
 @Form.create()
@@ -251,6 +251,12 @@ class StepTwo extends React.Component {
     };
   }
 
+  openNotificationType(type, msg) {
+    notification[type]({
+      message: msg,
+    });
+  }
+
   onDelete = (key) => {
     const arr = this.state.steps.slice();
     this.setState({
@@ -262,7 +268,7 @@ class StepTwo extends React.Component {
     const { steps, count } = this.state;
     const newData = {
       key: count,
-      id:"",
+      id: "",
       name: "",
       desc: "",
       do: "",
@@ -281,25 +287,27 @@ class StepTwo extends React.Component {
         methodName: this.props.stepFormStore.info.methodName,
         methodDesc: this.props.stepFormStore.info.methodDesc,
         ProjectId: this.props.stepFormStore.info.ProjectId,
-        body: values,
+        ...values,
       };
-
       new Promise(() => {
         http("post", "/methodOpt", methodData).then((res) => {
-          console.log(res);
+          let resp = res.data;
+          if (resp.code === 0) {
+            this.setState({
+              loading: true,
+            });
+            setTimeout(() => {
+              this.setState({
+                loading: false,
+              });
+              this.props.stepFormStore.setCurrent(2);
+            }, 2000);
+          } else {
+            this.openNotificationType("error", resp.msg);
+          }
         });
       });
-      if (!err) {
-        this.setState({
-          loading: true,
-        });
-        setTimeout(() => {
-          this.setState({
-            loading: false,
-          });
-          this.props.stepFormStore.setCurrent(2);
-        }, 2000);
-      }
+
     });
   };
 
@@ -343,6 +351,7 @@ class StepTwo extends React.Component {
 class StepThree extends React.Component {
   constructor(props) {
     super(props);
+    this.state = {};
   }
 
   render() {

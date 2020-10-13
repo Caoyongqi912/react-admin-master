@@ -255,8 +255,8 @@ class SpringText extends React.Component{
       MOVED = MOVED_O;
       moved_length = 0;
 
-      for (var i=0; i<POINTS.length; i++) {
-        POINTS[i].draw()
+      for (var j=0;j<POINTS.length; j++) {
+        POINTS[j].draw()
       }
 
       _this.myReq = window.requestAnimationFrame(animate);
